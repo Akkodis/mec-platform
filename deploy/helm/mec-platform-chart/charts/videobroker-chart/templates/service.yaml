@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "videobroker-chart.fullname" . }}
+  labels:
+    {{- include "videobroker-chart.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  {{- if and (eq .Values.service.type "ClusterIP") .Values.service.clusterIP }}
+  clusterIP: {{ .Values.service.clusterIP }}
+  {{- end }}
+  {{- if and .Values.service.loadBalancerIP (eq .Values.service.type "LoadBalancer") }}
+  loadBalancerIP: {{ .Values.service.loadBalancerIP }}
+  {{- end }}
+  ports:
+    - port: {{ .Values.service.port }}
+      protocol: TCP
+      targetPort: 8443
+      name: "tcp-8443"
+      {{- if (and (or (eq .Values.service.type "NodePort") (eq .Values.service.type "LoadBalancer")) .Values.service.nodePort) }}
+      nodePort: {{ .Values.service.nodePort }}
+      {{- else if eq .Values.service.type "ClusterIP" }}
+      nodePort: null
+      {{- end }}
+    {{- range untilStep (.Values.service.udp_min_port|int) (.Values.service.udp_max_port|int) 1 }}
+    - port: {{ . }}
+      targetPort: {{ . }}
+      nodePort: {{ . }}
+      protocol: UDP
+      name: "udp-{{ . }}"
+    {{- end }}
+  selector:
+    {{- include "videobroker-chart.selectorLabels" . | nindent 4 }}

@@ -1,0 +1,215 @@
+# The 5GMETA Multi-Access Edge Computing (MEC)  Platform
+
+## Introduction 
+
+This repository contains all the components necessary to get a working 5GMETA MEC Platform where the pipelines requested from a third-party will be deployed to handle specific data-types.
+This repo includes:
+ - the scripts to deploy the 5GMETA MEC platform stack
+ - example MEC applications in the src folder.
+
+The architecture of the MEC Platform is illustrated  by the figure below:
+
+<p align="center">
+<img src="./docs/images/MEC%20Architecture.png" />
+
+MEC Architecture
+</p>
+
+The interaction with the MEC Platform is illustrated by the figure below.
+
+<p align="center">
+<img src="./docs/images/seqdiag.png" />
+
+Sequence Diagram of exchanged Messages
+</p>
+
+
+## Deployment of the MEC Platform
+
+The deployment of the 5GMETA MEC Platfrom, including the 5GMETA modules is done as follows :
+
+- Install [ETSI Open Source MANO (OSM)](https://osm.etsi.org/) on a Ubuntu Server as described here: https://osm.etsi.org/docs/user-guide/latest/01-quickstart.html#installing-osm
+- Install the  baseline/default building blocks of the 5GMETA MEC platform defined in [D2.3 (Definition of 5GMETA architecture)](https://5gmeta-project.eu/wp-content/uploads/2024/05/D2.3.pdf).
+- The register of all the information of the MEC platform in the Discovery service at the 5GMETA Cloud platform.
+- Install Notary and Connaisseur for managing security in the cluster
+- Configuration of ETSI OSM
+
+The process is illustrated as follows:
+
+<p align="center">
+<img src="./docs/images/mec_deployement.png" />
+
+5GMETA MEC Platform Deployement steps
+</p>
+
+Once deployed, the different services can be accessed in the next ports:
+
+- OSM UI in port [https://your-mec-fqdn](https://your-mec-fqdn)
+- OSM API (Orchestration API) in port [https://your-mec-fqdn](https://your-mec-fqdn)
+- Grafana UI in port [https://your-mec-fqdn](https://your-mec-fqdn)
+- 5GMETA Edge Instance API [https://your-mec-fqdn/edgeinstance-api/](https://your-mec-fqdn/edgedeinstance-api/)
+- 5GMETA Registration API [https://your-mec-fqdn/registration-api/](https://your-mec-fqdn/registration-api/)
+- 5GMETA Message-Brokers:
+   - [Port 8161 for Broker UI](https://your-mec-fqdn/broker-ui/)
+   - [Port 5673 for producing data, clients)](https://your-mec-fqdn:5673)
+   - [Port 61616 of ActiveMQ, Kafka Connectors, Internal](https://your-mec-fqdn:61616)
+   - https://your-mec-fqdn:5673 (SB) and https://your-mec-fqdn:61616 (NB)
+- 5GMETA Video-Broker in https://your-mec-fqdn:8443/, :<32000-32098>
+
+### Prerequisities
+
+The required resources to install [ETSI Open Source MANO (OSM)](https://osm.etsi.org/docs/user-guide/latest/index.html) are:
+- One Machine for OSM with RECOMMENDED: 4 CPUs, 16 GB RAM, 80GB disk and a single interface with Internet access
+- One Machine to deploy a  K8s cluster to be used by ETSI OSM
+- The 2 machines should be on the same network.
+- Use the OSM recommended base image: Ubuntu22.04
+   - Ubuntu22.04 cloud image (64-bit variant required)
+   - Ubuntu22.04 server image (64-bit variant required)
+- [Ansible](https://docs.ansible.com/ansible/latest/index.html)
+
+
+#### Prerequisities for a local development environment
+
+- [VirtualBox](https://www.virtualbox.org/)
+- [Vagrant](https://developer.hashicorp.com/vagrant/tutorials/getting-started/getting-started-install?product_intent=vagrant)
+
+#### Provision of a VM using Vagrant and VirutalBox to host the MEC platform
+
+In the develpment environment, vagrant is used with VirtualBox as a provider to instanciate the MEC platform and implement the deployment procedure described earlier.
+
+#### Provision of a VM on Microsoft Azure
+
+The MEC Platform has also been deployed on a MS Azure VMs with the following resource: 4 vCPUs,  16 GB RAM, 80GB of RAM.
+
+
+#### Install Microk8s on another VM as export it as K8s VIM
+
+In this document, Micork8s is install for test purposes using vagrant. However, other VIM (Kubernetes distributions, etc.) can be installed and configured in the MEC Platform.
+
+
+###### Installation in the VirtualBox Dev environment
+
+To install Microk8s in a local environment type the following commands:
+
+```bash
+cd vagrant/osm
+vagrant up
+```
+
+Microk8s can also be installed on a MS Azure VM.
+
+
+###### Install OpenCost on Microk8s
+
+For monitoring the cost of the 5GMETA pipeline, Opencost is proposed as a new service.
+
+**Install Prometheus**
+```bash
+helm install prometheus --repo https://prometheus-community.github.io/helm-charts prometheus \
+  --namespace prometheus-system --create-namespace \
+  --set prometheus-pushgateway.enabled=false \
+  --set alertmanager.enabled=false \
+  -f https://raw.githubusercontent.com/opencost/opencost/develop/kubernetes/prometheus/extraScrapeConfigs.yaml
+```
+
+**Install Opencost**
+
+```bash
+helm upgrade opencost --repo https://opencost.github.io/opencost-helm-chart opencost \
+  --namespace opencost --create-namespace
+```
+
+##### Installation in the Azure Dev environment
+
+To install the MEC Platform on an Azure VM:
+
+- Modify the inventory file to set the IP address and the ssh user
+
+- Then type:
+
+```bash
+cd vagrant/osm/ansible
+ansible-playbook -i inventory.ini 5gmeta-mec-platform-playbook.yaml --private-key your_private_key
+```
+
+** This step is need when Mysql is not installed by OSM installer  **
+```bash
+helm install mysql oci://registry-1.docker.io/bitnamicharts/mysql --set auth.rootPassword=your-root-password -n osm
+```
+
+#### Configure the Hostname for OSM Client
+
+To login to the OSM Web UI type:
+
+```bash
+export OSM_HOSTNAME=$(kubectl get -n osm -o jsonpath="{.spec.rules[0].host}" ingress nbi-ingress)
+echo "OSM_HOSTNAME (for osm client): $OSM_HOSTNAME"
+$ kubectl get -n osm -o jsonpath="{.spec.rules[0].host}" ingress nbi-ingress
+```
+
+#### Post OSM installation configurations
+
+
+##### Create a VIM for deploying the Pipelines
+
+5GMETA uses pipelines which are Docker containers chained together for a specific data processing. In OSM, a VIM account is created and used to configure a VIM. To create a VIM account, type:
+
+```bash
+osm vim-create --name 5gmeta-vim --user admin --password admin --tenant admin --account_type dummy --auth_url http://nbi.10.2.0.6.nip.io:5000/v2.0
+```
+
+Add MicroK8s cluster as K8s cluster
+```bash
+osm k8scluster-add --creds kubeconfig.yaml --version '1.31' --vim 5gmeta-vim --description "Microk8s cluster" --k8s-nets '{"net1": "osm-ext"}' microk8s-cluster
+```
+
+#### Configure the repositories using OSM UI
+
+The following configuration need to be done through the UI:
+- Create an OSM repository using this URL: #TODO
+- Create a K8s Helm repository using this URL: #TODO
+
+
+#### Check OSM and 5GMETA MEC modules installation
+
+Also you can check the status of OSM ressources managed by Kubernetes in the following way:
+
+```bash
+kubectl get all -n osm
+```
+
+## MEC scripts
+
+Scripts and folders needed for the different tasks triggered in the MEC can be found in deploy folder.
+
+## Development of a pipeline
+
+The development of a pipeline begins by the creation of the different module images. Next, a helm chart should be created where the behaviour of the modules in a MEC's K8s cluster are defined. Finally the OSM descriptor should be created so that the pipeline is orchestrated in the MEC.
+
+
+## Flow for a pipeline deployment in the MEC
+
+When a third party requests for a data type in the cloud, after all the necessary operations are made in the cloud, the cloud will forward the request to the Instance API in the selected MEC. This API will check if there are available resources in the MEC to deploy the data-type pipeline for the requested instance type. If available, the request will be forwarded to the OSM Orchestration API and the pipeline will be deployed.
+
+
+## Results
+
+
+<p align="center">
+<img src="./docs/images/image.png" />
+
+Exemple result of deploying a MEC Application
+</p>
+
+
+## Conclusions and Roadmap
+
+#TODO
+
+
+## Credits
+
+- Djibrilla Amadou Kountche
+- Federico Princiotto ([federico.princiotto@linksfoundation.com](mailto:federico.princiotto@linksfoundation.com))
+- Mikel Serón Esnal ([mseron@vicomtech.org](mailto:mseron@vicomtech.org), [GitHub](https://github.com/mikelseron))
+- Felipe Mogollón ([fmogollon@vicomtech.org](mailto:fmogollon@vicomtech.org))

@@ -1,0 +1,9 @@
+[
+  {
+    "cpu": 4,
+    "gpu": false,
+    "memory": 4,
+    "type_id": 1,
+    "type_name": "medium"
+  }
+]
