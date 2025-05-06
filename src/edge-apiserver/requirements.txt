@@ -1,0 +1,14 @@
+connexion[swagger-ui,flask]
+python_dateutil
+setuptools
+swagger-ui-bundle
+sqlalchemy
+pymysql
+waitress
+cryptography
+werkzeug
+flask-sqlalchemy
+flask-marshmallow
+marshmallow-sqlalchemy
+pymysql
+sqlalchemy-utils

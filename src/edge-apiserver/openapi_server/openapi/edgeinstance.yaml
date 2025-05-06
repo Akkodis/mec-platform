@@ -1,0 +1,505 @@
+openapi: 3.0.3
+info:
+  title: 5GMETA MEC Platform API server
+  description: |-
+    API to manage pipeline instances and instace types in a
+    5GMETA MEC Server. The Instance API has the scope to consent the request of a
+    pipeline instance and receive the confirmation of the instance deployment.
+    An instance can be deleted, but not be modified or updated."
+#  termsOfService: http://swagger.io/terms/
+  contact:
+    name: 5GMETA
+    email: 5gmeta@akkodis.com
+    url: https://5gmeta-project.eu/
+  license:
+    name: EUPL 1.2
+    url: https://eupl.eu/1.2/en/
+  version: 1.0.0
+externalDocs:
+  description: Find out more about 5GMETA
+  url: https://5gmeta-project.eu/
+servers:
+- url: /api/v1
+tags:
+- name: Types
+  description: Operations about instance types
+#  externalDocs:
+#    description: Find out more
+#    url: http://swagger.io
+- name: Instances
+  description: Operations about pipeline instances
+paths:
+  /types:
+    post:
+      tags:
+      - Types
+      summary: Add a new instance type
+      operationId: post_type
+      requestBody:
+        x-body-name: payload
+        description: Type object that needs to be added
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InstanceType'
+        required: true
+      responses:
+        200:
+          description: Instance type successfully added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstanceType'
+        400:
+          description: Invalid instance type
+        402:
+          description: The instance type already exists
+      x-openapi-router-controller: openapi_server.controllers.types_controller
+    get:
+      tags:
+      - Types
+      summary: Get instance types
+      operationId: get_types
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstanceType'
+      x-openapi-router-controller: openapi_server.controllers.types_controller
+  /types/{type_id}:
+    get:
+      tags:
+      - Types
+      summary: Get an instance type
+      operationId: get_type
+      parameters:
+      - name: type_id
+        in: path
+        description: Specify the type id to get information about the instance type
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstanceType'
+        400:
+          description: Invalid instance type
+        404:
+          description: Instance type not found
+      x-openapi-router-controller: openapi_server.controllers.types_controller
+    patch:
+      tags:
+      - Types
+      summary: Update an instance type
+      operationId: patch_type
+      parameters:
+      - name: type_id
+        in: path
+        description: Specify the type id to modify the instance type and/or the resources
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        x-body-name: payload
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InstanceType'
+        required: true
+      responses:
+        200:
+          description: Instance type successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstanceType'
+        400:
+          description: Invalid instance type
+        404:
+          description: Instance type not found
+      x-openapi-router-controller: openapi_server.controllers.types_controller
+    delete:
+      tags:
+      - Types
+      summary: Delete an instance type
+      operationId: delete_type
+      parameters:
+      - name: type_id
+        in: path
+        description: Specify the type id to delete the instance type
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: Instance type successfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstanceType'
+        400:
+          description: Invalid instance type
+        404:
+          description: Instance type not found
+      x-openapi-router-controller: openapi_server.controllers.types_controller
+  /instances:
+    post:
+      tags:
+      - Instances
+      summary: Deploy a pipeline instance
+      operationId: post_instance
+      requestBody:
+        x-body-name: payload
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Instance'
+        required: true
+      responses:
+        200:
+          description: Reservation successfully made
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instance'
+        400:
+          description: Invalid instance
+        404:
+          description: The selected instance type is not available on this Edge server
+        405:
+          description: The selected datatype is not available on this Edge server
+        501:
+          description: There are no enough resources to deploy the instance
+        502:
+          description: Error orchestrating the pipeline instance
+      x-openapi-router-controller: openapi_server.controllers.instances_controller
+    get:
+      tags:
+      - Instances
+      summary: Get the deployed instances
+      operationId: get_instances
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instance'
+      x-openapi-router-controller: openapi_server.controllers.instances_controller
+
+  /instances/{instance_id}:
+    get:
+      tags:
+      - instances
+      summary: Get a specific instance information
+      operationId: get_instance
+      parameters:
+      - name: instance_id
+        in: path
+        description: Specify the instance id to get the information
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instance'
+        400:
+          description: Invalid instance
+        404:
+          description: Instance not found
+      x-openapi-router-controller: openapi_server.controllers.instances_controller
+    delete:
+      tags:
+      - instances
+      summary: Delete an instance
+      operationId: delete_instance
+      parameters:
+      - name: instance_id
+        in: path
+        description: Specify the instance ID to delete the pipeline instance
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Instance successfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instance'
+        400:
+          description: Invalid instance
+        404:
+          description: Instance not found
+      x-openapi-router-controller: openapi_server.controllers.instances_controller
+
+  /dataflows:
+    post:
+      tags:
+      - Registration API
+      summary: Register a Dataflow
+      operationId: add_dataflow
+      requestBody:
+        description: Dataflow metadata
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataFlow'
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "405":
+          description: Bad Request
+          content: {}
+      x-openapi-router-controller: openapi_server.controllers.registration_api_controller
+  /dataflows/{dataflowid}:
+    put:
+      tags:
+      - Registration API
+      summary: Update a registered a Dataflow
+      operationId: update_dataflow
+      parameters:
+      - name: dataflowid
+        in: path
+        description: Id of the dataflow
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Dataflow metadata
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataFlow'
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "404":
+          description: Not Found
+          content: {}
+        "405":
+          description: Bad Request
+          content: {}
+      x-openapi-router-controller: openapi_server.controllers.registration_api_controller
+    delete:
+      tags:
+      - Registration API
+      summary: Delete a registered a Dataflow
+      operationId: delete_dataflow
+      parameters:
+      - name: dataflowid
+        in: path
+        description: Id of the dataflow
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "404":
+          description: Not Found
+          content: {}
+      x-openapi-router-controller: openapi_server.controllers.registration_api_controller
+components:
+  schemas:
+    InstanceType:
+      title: InstanceType
+      example:
+        type_name: medium
+        cpu: 4
+        memory: 4
+        gpu: false
+      required:
+      - type_name
+      - cpu
+      - memory
+      - gpu
+      type: object
+      properties:
+        type_name:
+          type: string
+          description: Instance Type
+        cpu:
+          type: integer
+          description: CPU number
+          format: int64
+        memory:
+          type: integer
+          description: Total memory in GB
+          format: int64
+        gpu:
+          type: boolean
+          description: GPU available
+      xml:
+        name: type
+    Instance:
+      title: Instance
+      example:
+        datatype: cits
+        instance_type: medium
+        username: 5gmeta_user
+      required:
+      - datatype
+      - instance_type
+      - username
+      type: object
+      properties:
+        datatype:
+          type: string
+          description: Requested datatype
+        instance_type:
+          type: string
+          description: Requested instance type
+        username:
+          type: string
+          description: 5GMETA platform's client username
+    DataFlow:
+      required:
+      - dataInfo
+      - dataSourceInfo
+      - dataTypeInfo
+      - licenseInfo
+      type: object
+      properties:
+        dataTypeInfo:
+          $ref: '#/components/schemas/DataTypeInfo'
+        dataInfo:
+          $ref: '#/components/schemas/DataInfo'
+        licenseInfo:
+          $ref: '#/components/schemas/LicenseInfo'
+        dataSourceInfo:
+          $ref: '#/components/schemas/DataSourceInfo'
+    DataInfo:
+      required:
+      - dataflowDirection
+      - dataSampleRate
+      type: object
+      properties:
+        dataflowDirection:
+          type: string
+        dataFormat:
+          type: string
+        dataSampleRate:
+          type: number
+        extraAttributes:
+          type: string
+          nullable: true
+    LicenseInfo:
+      required:
+      - licenseGeolimit
+      - licenseType
+      type: object
+      properties:
+        licenseType:
+          type: string
+        licenseGeolimit:
+          type: string
+          enum: [local, edge, country, europe, world]
+    SourceLocationInfo:
+      required:
+      - locationQuadkey
+      type: object
+      properties:
+        locationCountry:
+          type: string
+          minLength: 3
+          maxLength: 3
+        locationLatitude:
+          type: number
+          minimum: -90
+          maximum: 90
+        locationLongitude:
+          type: number
+          minimum: -180
+          maximum: 180
+        locationQuadkey:
+          type: string
+          minLength: 18
+          maxLength: 22
+    DataSourceInfo:
+      required:
+      - sourceId
+      - sourceLocationInfo
+      - sourceType
+      type: object
+      properties:
+        sourceId:
+          type: integer
+        sourceType:
+          type: string
+          default: vehicle
+        sourceTimezone:
+          type: integer
+          minimum: -12
+          maximum: 12
+          nullable: true
+        timeStratumLevel:
+          type: integer
+          minimum: 1
+          maximum: 15
+          nullable: true
+        sourceLocationInfo:
+          $ref: '#/components/schemas/SourceLocationInfo'
+    DataTypeInfo:
+      required:
+      - dataSubType
+      - dataType
+      type: object
+      properties:
+        dataType:
+          type: string
+        dataSubType:
+          type: string
+
+  responses:
+    MaskError:
+      description: When any error occurs on mask
+      content: {}
+    ParseError:
+      description: When a mask can't be parsed
+      content: {}
+  securitySchemes:
+    auth:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: http://192.168.15.175:8080/auth/realms/5gmeta/protocol/openid-connect/auth
+          tokenUrl: http://192.168.15.175:8080/auth/realms/5gmeta/protocol/openid-connect/token
+          scopes:
+            write:pets: modify pets in your account
+            read:pets: read your pets
+#            uid: Unique identifier of the user accessing the service.
+      x-tokenInfoFunc: openapi_server.controllers.auth_controller.check_petstore_auth
+#      x-tokenInfoFunc: openapi_server.controllers.auth_controller.token_info
+#      x-scopeValidateFunc: openapi_server.controllers.auth_controller.validate_scope_petstore_auth
