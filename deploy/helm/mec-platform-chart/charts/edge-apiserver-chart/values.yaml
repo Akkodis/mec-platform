@@ -8,7 +8,7 @@ image:
   repository: damadouk/edgeinstance-api
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest"
+  tag: "dev"
 
 #imagePullSecrets: []
 #imagePullSecrets:
@@ -56,7 +56,7 @@ ingress:
       paths:
         - path: /edgeinstance-api/*
           pathType: ImplementationSpecific
-  tls: []
+  tls: 
     - secretName: ngui-cert
       hosts:
         - example.com
@@ -75,13 +75,28 @@ resources: {}
 
 env:
   - name: db_host
-    value: "mysql.osm.svc.cluster.local"
+    value: "mysql-cluster.cloud-platform.svc.cluster.local"
   - name: db_user
     value: "root"
   - name: db_root_password
     value: "5gmeta-platform"
   - name: db_name
     value: "instancedb"
+  - name: DB_USER
+    value: "5gmeta-platform"
+  - name: DB_PASSWORD
+    value: "5gmeta-platform"
+  - name: DB_IP
+    value: "10.2.0.5"
+  - name: DB_PORT
+    value: "30057"
+  - name: DB_NAME
+    value: dataflowdb
+  - name: DATAFLOW_VEHICLE_MINUTES_LIMIT
+    value: "1"
+  - name: DATAFLOW_INFRASTRUCTURE_MINUTES_LIMIT
+    value: "5"
+
 #  - name: introspectionip
 #    value: ""
 #  - name: kubernetesip
