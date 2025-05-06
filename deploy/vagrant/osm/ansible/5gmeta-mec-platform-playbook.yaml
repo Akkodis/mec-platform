@@ -155,7 +155,7 @@
         headers:
           Authorization: "{{ 'Bearer ' + token }}"
         body_format: json
-        body: { "description": "API to manage pipeline instances and instace types in a 5GMETA MEC Server", "ip": "{{ northbound_ip | default(ip) }}", "port": "5000", "props": "{}", "service_name": "edgeinstance-api" }
+        body: { "description": "API to manage pipeline instances and instace types in a 5GMETA MEC Server", "ip": "{{ northbound_ip | default(ip) }}", "port": "443", "props": "{}", "service_name": "edgeinstance-api" }
       when: mec_id is defined and token is defined
 
     - name: Add available instance types
