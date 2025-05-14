@@ -1,4 +1,4 @@
-connexion[swagger-ui,flask]
+connexion[swagger-ui,flask,uvicorn]
 python_dateutil
 setuptools
 swagger-ui-bundle

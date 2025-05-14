@@ -23,9 +23,9 @@ dataflow_infrastructure_minutes_limit = int(os.environ['DATAFLOW_INFRASTRUCTURE_
 engine = db.create_engine('mysql+pymysql://'+db_user+':'+db_password+'@'+db_ip+':'+db_port+'/'+db_name, isolation_level="READ UNCOMMITTED")
 connection = engine.connect()
 metadata = db.MetaData()
-dataflows = db.Table('dataflows', metadata, autoload=True, autoload_with=engine)
-pipelines = db.Table('pipelines', metadata, autoload=True, autoload_with=engine)
-topics = db.Table('topics', metadata, autoload=True, autoload_with=engine)
+dataflows = db.Table('dataflows', metadata,  autoload_with=engine)
+pipelines = db.Table('pipelines', metadata,  autoload_with=engine)
+topics = db.Table('topics', metadata, autoload_with=engine)
 
 def applyRules(dataflow):
 
@@ -64,8 +64,8 @@ def add_dataflow(body):  # noqa: E501
 
     :rtype: str
     """
-    if connexion.request.is_json:
-        body = DataFlow.from_dict(connexion.request.get_json())  # noqa: E501
+    if connexion.request.mimetype == "application/json":
+        body = DataFlow.from_dict(connexion.request.json())  # noqa: E501
 
     connection_local = engine.connect()
 
@@ -163,8 +163,8 @@ def update_dataflow(body, dataflowid):  # noqa: E501
             "error": "Item not found"
         }, 404
 
-    if connexion.request.is_json:
-        body = DataFlow.from_dict(connexion.request.get_json())  # noqa: E501
+    if connexion.request.mimetype == "application/json":
+        body = DataFlow.from_dict(connexion.request.json())  # noqa: E501
     
     dataflow_json = {
         "dataType": body.data_type_info.data_type,
