@@ -24,8 +24,20 @@ version: 0.1.0
 appVersion: "1.16.0"
 
 dependencies:
-  - name: connaisseur
-    version: 2.8.1 
-    repository: https://sse-secure-systems.github.io/connaisseur/charts
+  - name: cert-manager
+    version: v1.17.2
+    repository: https://charts.jetstack.io
+
+  - name: apisix
+    repository: https://charts.bitnami.com/bitnami
+    version: 3.7.0
+
+  - name: mysql
+    version: 12.3.5
+    repository: https://charts.bitnami.com/bitnami
+
+#  - name: connaisseur
+#    version: 2.8.1 
+#    repository: https://sse-secure-systems.github.io/connaisseur/charts
 
 

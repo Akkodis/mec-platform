@@ -39,17 +39,13 @@ securityContext: {}
   # runAsUser: 1000
 
 service:
-#  type: ClusterIP
   type: NodePort
-
-  clusterIP: ""
-  loadBalancerIP: ""
-
-  amqp-port: 5673
-  amqp-nodePort: 30673
+  amqp-port: 5672
+  amqp-nodePort: 30672
   ui-port: 8161
+  ui-nodePort: 30161
   external-port: 61616
-  #external-nodePort: 30616
+  external-nodePort: 30616
 
 ingress:
   enabled: false
@@ -92,6 +88,8 @@ env:
     value: "admin"
   - name: ACTIVEMQ_WEB_PASSWORD
     value: "admin-2024-2025."
+
+
 
 autoscaling:
   enabled: false

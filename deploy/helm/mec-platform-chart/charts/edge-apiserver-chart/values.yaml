@@ -75,7 +75,7 @@ resources: {}
 
 env:
   - name: db_host
-    value: "mysql-cluster.cloud-platform.svc.cluster.local"
+    value: "mysql-cluster.osm.svc.cluster.local"
   - name: db_user
     value: "root"
   - name: db_root_password

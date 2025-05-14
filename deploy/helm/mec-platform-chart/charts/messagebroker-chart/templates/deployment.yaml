@@ -33,16 +33,16 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-#          ports:
-#            - name: amqp
-#              containerPort: 5673
-#              protocol: TCP
-#            - name: http
-#              containerPort: 8161
-#              protocol: TCP
-#            - name: core
-#              containerPort: 61616
-#              protocol: TCP
+          ports:
+            - name: amqp
+              containerPort: 5672
+              protocol: TCP
+            - name: ui
+              containerPort: 8161
+              protocol: TCP
+            - name: external
+              containerPort: 61616
+              protocol: TCP
 #          livenessProbe:
 #            httpGet:
 #              path: /

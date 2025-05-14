@@ -107,7 +107,7 @@
 
     - name: Register MEC server in 5GMETA cloud
       ansible.builtin.uri:
-        url: https://{{ cloud_platform }}/discovery-api/mec
+        url: https://{{ cloud_platform }}/api/v1/mec
         validate_certs: false
         method: POST
         return_content: true
@@ -126,7 +126,7 @@
 
     - name: Add tiles to MEC
       ansible.builtin.uri:
-        url: https://{{ cloud_platform }}/discovery-api/mec/{{ mec_id }}/tile/{{ item }}
+        url: https://{{ cloud_platform }}/api/v1/mec/{{ mec_id }}/tile/{{ item }}
         validate_certs: false
         method: POST
         headers:
@@ -136,7 +136,7 @@
 
     - name: Register message-broker service in 5GMETA Cloud Platform
       ansible.builtin.uri:
-        url: https://{{ cloud_platform }}/discovery-api/mec/{{ mec_id }}/nbservices
+        url: https://{{ cloud_platform }}/api/v1/mec/{{ mec_id }}/nbservices
         validate_certs: false
         method: POST
         return_content: true
@@ -149,7 +149,7 @@
     - name: Register edgeinstance-api service in 5GMETA Cloud Platform
       ansible.builtin.uri:
         validate_certs: false
-        url: https://{{ cloud_platform }}/discovery-api/mec/{{ mec_id }}/nbservices
+        url: https://{{ cloud_platform }}/api/v1/mec/{{ mec_id }}/nbservices
         method: POST
         return_content: true
         headers:
@@ -161,7 +161,7 @@
     - name: Add available instance types
       ansible.builtin.uri:
         validate_certs: false
-        url: https://{{ cloud_platform }}/cloudinstance-api/mecs/{{ mec_id }}/types
+        url: https://{{ cloud_platform }}/api/v1/mecs/{{ mec_id }}/types
         validate_certs: false
         method: POST
         headers:
