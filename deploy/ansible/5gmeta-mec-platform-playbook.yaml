@@ -1,0 +1,206 @@
+---
+- name: Deploy an instance of the 5GMETA MEC Platform
+  hosts: all
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    cloud_platform: "cloudplatform.francecentral.cloudapp.azure.com"
+    datatypes:
+      - helloworld
+      - cits
+      - image
+      - video
+    cloud_platform: "cloudplatform.francecentral.cloudapp.azure.com"
+    southbound_host: "akkodismec.francecentral.cloudapp.azure.com" # Hostname for the communication with S&D
+    northbound_host: "akkodismec.francecentral.cloudapp.azure.com" # Hostname for communication with the Cloud Platform
+    tiles: # MEC tile coverage zoom: 6 - 18
+      - "120202221322022302" # Example for Toulouse
+      - "120202221322022301" # Example for Toulouse
+#      - ""
+    add_instances: true
+    available_instance_types:
+      - { type_name: small, cpu: 2, memory: 2, gpu: false } # SMALL: 2 vCPU, 2GB RAM, No GPU
+      - { type_name: medium, cpu: 4, memory: 4, gpu: false } # MEDIUM: 4 vCPU, 4GB RAM, No GPU
+      - { type_name: large, cpu: 8, memory: 4, gpu: false } # LARGE: 8 vCPU, 4GB RAM, No GPU
+      - { type_name: advanced, cpu: 8, memory: 4, gpu: true } # ADVANCED: 8 vCPU, 4GB RAM, GPU
+
+    messagebroker_port: 30672 
+    videobroker_port: 31402 
+    registrationapi_port: 443 
+    edgeinstanceapi_port: 443
+    organization: AKKODIS
+    city: Blagnac
+    latitude: "43.636398"
+    longitude: "1.390600"
+    auth_username: "mec-akkodis"
+    auth_password: "mec-platform-2053-changeme"
+    cpu: "4"
+    gpu: "false"
+    memory: "16"
+    storage: "1000"
+
+  tasks:
+
+    - name: Determine if k3s has been installed
+      ansible.builtin.stat:
+        path: /usr/local/bin/k3s
+      register: k3s
+
+    - name: Install ETSI OSM and the Python dependencies
+      when: not k3s.stat.exists
+      block:
+        - name: Download ETSI OSM installation Script
+          ansible.builtin.get_url:
+            url: https://osm-download.etsi.org/ftp/osm-17.0-seventeen/install_osm.sh
+            dest: /tmp/install_osm.sh
+            mode: '0777'
+
+        - name: Install ETSI OSM
+          ansible.builtin.shell: /tmp/install_osm.sh -y
+
+        - name: Install apt packages
+          ansible.builtin.apt:
+            pkg:
+            - python3-pip
+            update_cache: yes
+          become: true
+
+        - name: Install Python pip packages
+          ansible.builtin.pip:
+            name: "{{ packages }}"
+          vars:
+            packages:
+              - kubernetes
+              - pycurl
+              - pyGeoTile
+              - prettytable
+              - click
+
+    - name: Determine if 5GMETA MEC Platform modules are installed
+      ansible.builtin.stat:
+        path: /home/azureuser/osm
+      register: osmstat
+
+    - name: Clone repositories and install Helm charts
+      when: not osmstat.stat.exists
+      block:    
+        - name: Clone the OSM repo
+          ansible.builtin.git:
+            repo: https://github.com/Akkodis/osm.git
+            dest: /home/azureuser/osm
+
+        - name: Clone the MEC Platform repo
+          ansible.builtin.git:
+            repo: https://github.com/Akkodis/mec-platform.git
+            dest: /home/azureuser/mec-platform
+       
+
+        - name: Delete Existing OSM Ingress and ConfigMaps
+          ansible.builtin.shell: kubectl delete "{{ item }}" -n osm
+          with_items:
+            - "configmaps/grafana"
+            - "ingress/ngui-ingress"
+          ignore_errors: true
+
+        - name: Deploy  the 5GMETA MEC Platform modules
+          kubernetes.core.helm:
+            name: mec-platform
+            release_namespace: osm
+            create_namespace: false
+            dependency_update: true
+            chart_ref: /home/azureuser/mec-platform/deploy/helm/mec-platform-chart
+
+    - name: Get token for accessing 5GMETA Cloud Platform API
+      ansible.builtin.uri:
+        url: https://{{ cloud_platform }}/identity/realms/5gmeta/protocol/openid-connect/token
+        validate_certs: false
+        method: POST
+        return_content: true
+        headers:
+          Content-Type: application/x-www-form-urlencoded
+        body_format: form-urlencoded
+        body:
+          grant_type: password
+          username: "{{ auth_username }}"
+          password: "{{ auth_password }}"
+          client_id: "5gmeta_login"
+          client_secret: "3XIYwrwXsEr3p0O9A9uoECOKZjYmSA3K"
+        creates: "{{ ansible_env.HOME }}/5gmeta/logs/services_registered"
+      register: json_response
+      changed_when: json_response.status | default(0) == 200
+
+    - name: Set token variable
+      ansible.builtin.set_fact:
+        token: "{{ json_response.json.access_token }}"
+      when: json_response is changed
+
+    - name: Register this MEC Plaform instance in 5GMETA Cloud Platfrom
+      ansible.builtin.uri:
+        url: https://{{ cloud_platform }}/api/v1/mec
+        validate_certs: false
+        method: POST
+        return_content: true
+        headers:
+          Authorization: "{{ 'Bearer ' + token }}"
+        body_format: json
+        body: { "geolocation": [], "lat": "{{ latitude }}", "lng": "{{ longitude }}", "name": "{{ city }}", "organization": "{{ organization }}", "props": {}, "resources": { "cpu": "{{ cpu }}", "gpu": "{{ gpu }}", "memory": "{{ memory }}", "storage": "{{ storage }}" }, "sb_services": [ { "description": "Message Broker", "host": "{{ southbound_host }}", "port": "{{ messagebroker_port }}", "service_name": "message-broker" }, { "description": "Video Stream Broker", "host": "{{ southbound_host }}", "port": "{{ videobroker_port }}", "service_name": "video-broker" }, { "description": "Registration API", "host": "{{ southbound_host }}", "port": "{{ registrationapi_port }}", "service_name": "registration-api" } ] }
+      when: token is defined
+      register: json_response
+      changed_when: json_response.status == 200
+
+    - name: "Set mec_id variable"
+      ansible.builtin.set_fact:
+        mec_id: "{{ json_response.json.mec_id }}"
+      when: json_response.changed
+
+    - name: Add tiles to MEC
+      ansible.builtin.uri:
+        url: https://{{ cloud_platform }}/api/v1/mec/{{ mec_id }}/tile/{{ item }}
+        validate_certs: false
+        method: POST
+        headers:
+          Authorization: "{{ 'Bearer ' + token }}"
+      when: mec_id is defined and token is defined
+      loop: "{{ tiles }}"
+
+    - name: Register message-broker service in 5GMETA Cloud Platform
+      ansible.builtin.uri:
+        url: https://{{ cloud_platform }}/api/v1/mec/{{ mec_id }}/nbservices
+        validate_certs: false
+        method: POST
+        return_content: true
+        headers:
+          Authorization: "{{ 'Bearer ' + token }}"
+        body_format: json
+        body: { "description": "Message Broker", "host": "{{ northbound_host }}", "port": "{{ messagebroker_port }}", "props": "{}", "service_name": "message-broker" }
+      when: mec_id is defined and token is defined
+
+    - name: Register edgeinstance-api service in 5GMETA Cloud Platform
+      ansible.builtin.uri:
+        validate_certs: false
+        url: https://{{ cloud_platform }}/api/v1/mec/{{ mec_id }}/nbservices
+        method: POST
+        return_content: true
+        headers:
+          Authorization: "{{ 'Bearer ' + token }}"
+        body_format: json
+        body: { "description": "API to manage pipeline instances and instace types in a 5GMETA MEC Server", "host": "{{ northbound_host }}", "port": "{{ edgeinstanceapi_port }}", "props": "{}", "service_name": "edgeinstance-api" }
+      when: mec_id is defined and token is defined
+
+    - name: Add available instance types
+      ansible.builtin.uri:
+        validate_certs: false
+        url: https://{{ cloud_platform }}/api/v1/mecs/{{ mec_id }}/types
+        validate_certs: false
+        method: POST
+        headers:
+          Authorization: "{{ 'Bearer ' + token }}"
+        body: '{{ item }}'
+        body_format: json
+      loop: "{{ available_instance_types }}"
+      when: add_instances == true
+
+    - name: "Final message"
+      ansible.builtin.debug:
+        msg:
+  #        - Remember to add users to docker group with "usermod -aG docker <username>". Use "newgrp docker" to use the group immediately
+          - "MEC stack correctly deployed, server registered in discovery module with ID {{ mec_id }}"
