@@ -46,14 +46,13 @@ Once deployed, the different services can be accessed in the next ports:
 
 - OSM UI in port [https://your-mec-fqdn](https://your-mec-fqdn)
 - OSM API (Orchestration API) in port [https://your-mec-fqdn](https://your-mec-fqdn)
-- Grafana UI in port [https://your-mec-fqdn](https://your-mec-fqdn)
-- 5GMETA Edge Instance API [https://your-mec-fqdn/edgeinstance-api/](https://your-mec-fqdn/edgedeinstance-api/)
-- 5GMETA Registration API [https://your-mec-fqdn/registration-api/](https://your-mec-fqdn/registration-api/)
+- Grafana UI in port [https://your-mec-fqdn/grafana/](https://your-mec-fqdn/grafana/)
+- 5GMETA MEC Platform API Server [https://your-mec-fqdn/api/v1/](https://your-mec-fqdn/api/v1/)
 - 5GMETA Message-Brokers:
    - [Port 8161 for Broker UI](https://your-mec-fqdn/broker-ui/)
-   - [Port 5673 for producing data, clients)](https://your-mec-fqdn:5673)
-   - [Port 61616 of ActiveMQ, Kafka Connectors, Internal](https://your-mec-fqdn:61616)
-   - https://your-mec-fqdn:5673 (SB) and https://your-mec-fqdn:61616 (NB)
+   - [Port 5673 for producing data, clients)](your-mec-fqdn:30672)
+   - [Port 61616 of ActiveMQ, Kafka Connectors, Internal](your-mec-fqdn:30616)
+   - https://your-mec-fqdn:30672 (SB) and https://your-mec-fqdn:30616 (NB)
 - 5GMETA Video-Broker in https://your-mec-fqdn:8443/, :<32000-32098>
 
 ### Prerequisities
@@ -128,13 +127,8 @@ To install the MEC Platform on an Azure VM:
 - Then type:
 
 ```bash
-cd vagrant/osm/ansible
+cd deploy/ansible
 ansible-playbook -i inventory.ini 5gmeta-mec-platform-playbook.yaml --private-key your_private_key
-```
-
-** This step is need when Mysql is not installed by OSM installer  **
-```bash
-helm install mysql oci://registry-1.docker.io/bitnamicharts/mysql --set auth.rootPassword=your-root-password -n osm
 ```
 
 #### Configure the Hostname for OSM Client
@@ -190,16 +184,6 @@ The development of a pipeline begins by the creation of the different module ima
 ## Flow for a pipeline deployment in the MEC
 
 When a third party requests for a data type in the cloud, after all the necessary operations are made in the cloud, the cloud will forward the request to the Instance API in the selected MEC. This API will check if there are available resources in the MEC to deploy the data-type pipeline for the requested instance type. If available, the request will be forwarded to the OSM Orchestration API and the pipeline will be deployed.
-
-
-## Results
-
-
-<p align="center">
-<img src="./docs/images/image.png" />
-
-Exemple result of deploying a MEC Application
-</p>
 
 
 ## Conclusions and Roadmap
