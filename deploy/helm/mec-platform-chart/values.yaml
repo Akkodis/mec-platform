@@ -1,9 +1,9 @@
 global:
   mecplatform:
-    hostname: yourhostname
+    hostname: akkodismec.francecentral.cloudapp.azure.com
 
   oauth2:
-     issuer: &oauthissuer yourissuer
+    issuer: &oauthissuer https://cloudplatform.francecentral.cloudapp.azure.com/identity
      realm: 5gmeta
      apisix:
        client: apisix
