@@ -172,17 +172,10 @@ Also you can check the status of OSM ressources managed by Kubernetes in the fol
 kubectl get all -n osm
 ```
 
-## MEC scripts
+## Development of MEC Services
 
-Scripts and folders needed for the different tasks triggered in the MEC can be found in deploy folder.
-
-## Development of a pipeline
 
 The development of a pipeline begins by the creation of the different module images. Next, a helm chart should be created where the behaviour of the modules in a MEC's K8s cluster are defined. Finally the OSM descriptor should be created so that the pipeline is orchestrated in the MEC.
-
-
-## Flow for a pipeline deployment in the MEC
-
 When a third party requests for a data type in the cloud, after all the necessary operations are made in the cloud, the cloud will forward the request to the Instance API in the selected MEC. This API will check if there are available resources in the MEC to deploy the data-type pipeline for the requested instance type. If available, the request will be forwarded to the OSM Orchestration API and the pipeline will be deployed.
 
 
