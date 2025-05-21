@@ -29,7 +29,7 @@ Sequence Diagram of exchanged Messages
 The deployment of the 5GMETA MEC Platfrom will :
 
 - Install [ETSI Open Source MANO (OSM)](https://osm.etsi.org/) on a Ubuntu Server as described here: https://osm.etsi.org/docs/user-guide/latest/01-quickstart.html#installing-osm
-- Install the  baseline/default building blocks of the 5GMETA MEC platform defined in [D2.3 (Definition of 5GMETA architecture)](https://5gmeta-project.eu/wp-content/uploads/2024/05/D2.3.pdf).
+- Install the  baseline/default building blocks of the 5GMETA MEC platform
 - Register of the MEC platform in the 5GMETA Cloud platform.
 
 The following is done manually:
@@ -80,23 +80,27 @@ The required resources to install [ETSI Open Source MANO (OSM)](https://osm.etsi
 
 
 
-### MicroK8s used in the AKKODIS demonstrator on Microsoft Azure
 
-The MEC Platform has also been deployed on a MS Azure VMs with the following resource: 4 vCPUs,  16 GB RAM, 80GB of RAM.
-In this document, Micork8s is install for test purposes using vagrant. However, other VIM (Kubernetes distributions, etc.) can be installed and configured in the MEC Platform.
+### Deploying the MEC Platform
+
+
+#### MicroK8s used to provide a Kubernetes cluster to OSM
+
+The Microk8s can be used on the following resource: 4 vCPUs,  16 GB RAM, 80GB of RAM either on VirtualBox or MS Azure. In this document, MS Azure is considered as defautl.But, other Kubernetes distributions, etc. can be installed and configured in OSM.
+
+To install MicroK8s type the following commands:
 
 ```bash
 sudo snap install microk8s  --classic
-     sudo usermod -a -G microk8s `whoami`
-     newgrp microk8s
-     microk8s.status --wait-ready
-     microk8s config > config_to_be_imported_in_osm.yaml
+sudo usermod -a -G microk8s `whoami`
+newgrp microk8s
+microk8s.status --wait-ready
+microk8s config > config_to_be_imported_in_osm.yaml
 ```
 
-The file 'config_to_be_imported_in_osm.yaml' must be copied in the MEC Platform.
+The file 'config_to_be_imported_in_osm.yaml' must be copied in the MEC Platform (the server hosting OSM).
 
-
-For monitoring the cost of the 5GMETA pipeline, Opencost is proposed as a new service.
+A new features of the 5GMETA  MEC Platform is to use Opencoast for monitoring the cost of the 5GMETA pipeline.
 
 **Install OpenCost on Microk8s**
 
@@ -117,9 +121,10 @@ helm upgrade opencost --repo https://opencost.github.io/opencost-helm-chart open
   --namespace opencost --create-namespace
 ```
 
-##### Installation of the MEC Platform on a MS Azure VM
 
-To install the MEC Platform on an Azure VM:
+##### Deployment of the  the MEC Platform
+
+To install the MEC Platform on an a VM or a physical server :
 
 - Modify the inventory file to set the IP address and the ssh user
 
@@ -149,19 +154,20 @@ kubectl get -n osm -o jsonpath="{.spec.rules[0].host}" ingress nbi-ingress
 
 ```bash
 sudo snap install osmclient
-osm vim-create --name 5gmeta-vim --user admin --password admin --tenant admin --account_type dummy --auth_url http://nbi.10.2.0.6.nip.io:5000/v2.0
+osm vim-create --name 5gmeta-vim --user admin --password admin --tenant admin --account_type dummy --auth_url chagne_with_the_auth_url
 ```
 
 Add MicroK8s cluster as K8s cluster
 ```bash
-osm k8scluster-add --creds config_to_be_imported_in_osm.yaml --version '1.31' --vim 5gmeta-vim --description "Microk8s cluster" --k8s-nets '{"net1": "osm-ext"}' microk8s-cluster
+osm k8scluster-add --creds config_to_be_imported_in_osm.yaml --version 'change_with_mk8s_version' --vim 5gmeta-vim --description "Microk8s cluster" --k8s-nets '{"net1": "osm-ext"}' microk8s-cluster
 ```
+
 
 #### Configure the repositories using OSM UI
 
 The following configuration need to be done through the UI:
-- Create an OSM repository using this URL: #TODO
-- Create a K8s Helm repository using this URL: #TODO
+- Use the OSM UI to import the VNF with are in /home/azureuser/osm
+- Create a K8s Helm repository using this URL
 
 
 #### Check OSM and 5GMETA MEC modules installation
@@ -181,7 +187,10 @@ When a third party requests for a data type in the cloud, after all the necessar
 
 ## Conclusions and Roadmap
 
-- TODO
+
+# TODO
+
+- [] Ensure that this documentation is complete (contains the H2020 relevant information)
 
 
 ## Credits
