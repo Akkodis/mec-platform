@@ -2,10 +2,10 @@
 
 ## Introduction 
 
-This repository contains all the components necessary to get a working 5GMETA MEC Platform where the pipelines requested from a third-party will be deployed to handle specific data-types.
-This repo includes:
- - the scripts to deploy the 5GMETA MEC platform stack
- - example MEC applications in the src folder.
+This repository contains the components of the 5GMETA MEC Platform which servers the third-parties to request the deployment of  their pipelines  to handle specific data-types. This repo includes:
+ - source codes of the MEC Platform API server and MEC platform applications (LCCAM, Data Quality, etc.)
+ - the scripts to deploy the 5GMETA MEC Platform
+
 
 The architecture of the MEC Platform is illustrated  by the figure below:
 
@@ -26,13 +26,17 @@ Sequence Diagram of exchanged Messages
 
 ## Deployment of the MEC Platform
 
-The deployment of the 5GMETA MEC Platfrom, including the 5GMETA modules is done as follows :
+The deployment of the 5GMETA MEC Platfrom will :
 
 - Install [ETSI Open Source MANO (OSM)](https://osm.etsi.org/) on a Ubuntu Server as described here: https://osm.etsi.org/docs/user-guide/latest/01-quickstart.html#installing-osm
 - Install the  baseline/default building blocks of the 5GMETA MEC platform defined in [D2.3 (Definition of 5GMETA architecture)](https://5gmeta-project.eu/wp-content/uploads/2024/05/D2.3.pdf).
-- The register of all the information of the MEC platform in the Discovery service at the 5GMETA Cloud platform.
-- Install Notary and Connaisseur for managing security in the cluster
+- Register of the MEC platform in the 5GMETA Cloud platform.
+
+The following is done manually:
 - Configuration of ETSI OSM
+
+Notary and Connaisseur for managing security in the cluster are disabled in the current version.
+
 
 The process is illustrated as follows:
 
@@ -55,6 +59,7 @@ Once deployed, the different services can be accessed in the next ports:
    - https://your-mec-fqdn:30672 (SB) and https://your-mec-fqdn:30616 (NB)
 - 5GMETA Video-Broker in https://your-mec-fqdn:8443/, :<32000-32098>
 
+
 ### Prerequisities
 
 The required resources to install [ETSI Open Source MANO (OSM)](https://osm.etsi.org/docs/user-guide/latest/index.html) are:
@@ -71,38 +76,32 @@ The required resources to install [ETSI Open Source MANO (OSM)](https://osm.etsi
 
 - [VirtualBox](https://www.virtualbox.org/)
 - [Vagrant](https://developer.hashicorp.com/vagrant/tutorials/getting-started/getting-started-install?product_intent=vagrant)
+- In the develpment environment, vagrant is used with VirtualBox as a provider to instanciate the MEC platform and implement the deployment procedure described earlier.
 
-#### Provision of a VM using Vagrant and VirutalBox to host the MEC platform
 
-In the develpment environment, vagrant is used with VirtualBox as a provider to instanciate the MEC platform and implement the deployment procedure described earlier.
 
-#### Provision of a VM on Microsoft Azure
+### MicroK8s used in the AKKODIS demonstrator on Microsoft Azure
 
 The MEC Platform has also been deployed on a MS Azure VMs with the following resource: 4 vCPUs,  16 GB RAM, 80GB of RAM.
-
-
-#### Install Microk8s on another VM as export it as K8s VIM
-
 In this document, Micork8s is install for test purposes using vagrant. However, other VIM (Kubernetes distributions, etc.) can be installed and configured in the MEC Platform.
 
-
-###### Installation in the VirtualBox Dev environment
-
-To install Microk8s in a local environment type the following commands:
-
 ```bash
-cd vagrant/osm
-vagrant up
+sudo snap install microk8s  --classic
+     sudo usermod -a -G microk8s `whoami`
+     newgrp microk8s
+     microk8s.status --wait-ready
+     microk8s config > config_to_be_imported_in_osm.yaml
 ```
 
-Microk8s can also be installed on a MS Azure VM.
+The file 'config_to_be_imported_in_osm.yaml' must be copied in the MEC Platform.
 
-
-###### Install OpenCost on Microk8s
 
 For monitoring the cost of the 5GMETA pipeline, Opencost is proposed as a new service.
 
-**Install Prometheus**
+**Install OpenCost on Microk8s**
+
+
+**Install Prometheus as required by OpenCost**
 ```bash
 helm install prometheus --repo https://prometheus-community.github.io/helm-charts prometheus \
   --namespace prometheus-system --create-namespace \
@@ -118,7 +117,7 @@ helm upgrade opencost --repo https://opencost.github.io/opencost-helm-chart open
   --namespace opencost --create-namespace
 ```
 
-##### Installation in the Azure Dev environment
+##### Installation of the MEC Platform on a MS Azure VM
 
 To install the MEC Platform on an Azure VM:
 
@@ -138,7 +137,7 @@ To login to the OSM Web UI type:
 ```bash
 export OSM_HOSTNAME=$(kubectl get -n osm -o jsonpath="{.spec.rules[0].host}" ingress nbi-ingress)
 echo "OSM_HOSTNAME (for osm client): $OSM_HOSTNAME"
-$ kubectl get -n osm -o jsonpath="{.spec.rules[0].host}" ingress nbi-ingress
+kubectl get -n osm -o jsonpath="{.spec.rules[0].host}" ingress nbi-ingress
 ```
 
 #### Post OSM installation configurations
@@ -149,12 +148,13 @@ $ kubectl get -n osm -o jsonpath="{.spec.rules[0].host}" ingress nbi-ingress
 5GMETA uses pipelines which are Docker containers chained together for a specific data processing. In OSM, a VIM account is created and used to configure a VIM. To create a VIM account, type:
 
 ```bash
+sudo snap install osmclient
 osm vim-create --name 5gmeta-vim --user admin --password admin --tenant admin --account_type dummy --auth_url http://nbi.10.2.0.6.nip.io:5000/v2.0
 ```
 
 Add MicroK8s cluster as K8s cluster
 ```bash
-osm k8scluster-add --creds kubeconfig.yaml --version '1.31' --vim 5gmeta-vim --description "Microk8s cluster" --k8s-nets '{"net1": "osm-ext"}' microk8s-cluster
+osm k8scluster-add --creds config_to_be_imported_in_osm.yaml --version '1.31' --vim 5gmeta-vim --description "Microk8s cluster" --k8s-nets '{"net1": "osm-ext"}' microk8s-cluster
 ```
 
 #### Configure the repositories using OSM UI
@@ -181,7 +181,7 @@ When a third party requests for a data type in the cloud, after all the necessar
 
 ## Conclusions and Roadmap
 
-#TODO
+- TODO
 
 
 ## Credits
