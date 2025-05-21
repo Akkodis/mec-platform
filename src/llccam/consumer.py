@@ -16,7 +16,7 @@ gauge = Gauge(
 
 username = os.getenv("AMQP_USER")
 password = os.getenv("AMQP_PASS")
-ip = os.getenv("AMQP_IP", "127.0.01")
+ip = os.getenv("AMQP_IP", "127.0.0.1")
 port = os.getenv("AMQP_PORT", "5673")
 topic = os.getenv("AMQP_TOPIC", "cits-large")
 
@@ -45,7 +45,7 @@ class Recv(MessagingHandler):
         self.received += 1
 
 # Configuration
-url = "amqp://"+username+":"+password+"@"+ip+":"+port+"/topic://"+topic  # Replace with your broker URL
+url = f'amqp://{username}:{password}@{ip}:{port}/topic://{topic}'  # Replace with your broker URL
 
 # Create and run the subscriber
 Container(Recv(url)).run()
