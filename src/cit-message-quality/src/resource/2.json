@@ -1,0 +1,63 @@
+{
+    "header": {
+        "protocolVersion": 2,
+        "messageID": 2,
+        "stationID": 121212
+    },
+    "cam": {
+        "generationDeltaTime": 59282,
+        "camParameters": {
+            "basicContainer": {
+                "stationType": 5,
+                "referencePosition": {
+                    "latitude": 450660847,
+                    "longitude": 76572516,
+                    "positionConfidenceEllipse": {
+                        "semiMajorConfidence": 4095,
+                        "semiMinorConfidence": 4095,
+                        "semiMajorOrientation": 3601
+                    },
+                    "altitude": {
+                        "altitudeValue": 0,
+                        "altitudeConfidence": "unavailable"
+                    }
+                }
+            },
+            "highFrequencyContainer": {
+                "basicVehicleContainerHighFrequency": {
+                    "heading": {
+                        "headingValue": 350,
+                        "headingConfidence": 127
+                    },
+                    "speed": {
+                        "speedValue": 1477,
+                        "speedConfidence": 127
+                    },
+                    "driveDirection": "unavailable",
+                    "vehicleLength": {
+                        "vehicleLengthValue": 45,
+                        "vehicleLengthConfidenceIndication": "unavailable"
+                    },
+                    "vehicleWidth": 18,
+                    "longitudinalAcceleration": {
+                        "longitudinalAccelerationValue": -3,
+                        "longitudinalAccelerationConfidence": 102
+                    },
+                    "curvature": {
+                        "curvatureValue": 0,
+                        "curvatureConfidence": "unavailable"
+                    },
+                    "curvatureCalculationMode": "unavailable",
+                    "yawRate": {
+                        "yawRateValue": 0,
+                        "yawRateConfidence": "unavailable"
+                    },
+                    "lateralAcceleration": {
+                        "lateralAccelerationValue": 0,
+                        "lateralAccelerationConfidence": 102
+                    }
+                }
+            }
+        }
+    }
+}

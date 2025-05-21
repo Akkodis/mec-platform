@@ -1,0 +1,97 @@
+{
+  "header": {
+    "protocolVersion": 1,
+    "messageID": 2,
+    "stationID": 1234567
+  },
+  "cam": {
+    "generationDeltaTime": 11409,
+    "camParameters": {
+      "basicContainer": {
+        "stationType": 5,
+        "referencePosition": {
+          "latitude": 40487111,
+          "longitude": 79494789,
+          "positionConfidenceEllipse": {
+            "semiMajorConfidence": 500,
+            "semiMinorConfidence": 400,
+            "semiMajorOrientation": 0
+          },
+          "altitude": {
+            "altitudeValue": 2000,
+            "altitudeConfidence": "alt-000-02"
+          }
+        }
+      },
+      "highFrequencyContainer": {
+        "basicVehicleContainerHighFrequency": {
+          "heading": {
+            "headingValue": 0,
+            "headingConfidence": 1
+          },
+          "speed": {
+            "speedValue": 2000,
+            "speedConfidence": 1
+          },
+          "driveDirection": "forward",
+          "vehicleLength": {
+            "vehicleLengthValue": 35,
+            "vehicleLengthConfidenceIndication": "noTrailerPresent"
+          },
+          "vehicleWidth": 20,
+          "longitudinalAcceleration": {
+            "longitudinalAccelerationValue": 10,
+            "longitudinalAccelerationConfidence": 1
+          },
+          "curvature": {
+            "curvatureValue": 0,
+            "curvatureConfidence": "onePerMeter-0-00002"
+          },
+          "curvatureCalculationMode": "yawRateUsed",
+          "yawRate": {
+            "yawRateValue": 0,
+            "yawRateConfidence": "degSec-000-01"
+          },
+          "accelerationControl": "40",
+          "steeringWheelAngle": {
+            "steeringWheelAngleValue": 30,
+            "steeringWheelAngleConfidence": 1
+          },
+          "lateralAcceleration": {
+            "lateralAccelerationValue": -2,
+            "lateralAccelerationConfidence": 1
+          },
+          "verticalAcceleration": {
+            "verticalAccelerationValue": 1,
+            "verticalAccelerationConfidence": 1
+          }
+        }
+      },
+      "lowFrequencyContainer": {
+        "basicVehicleContainerLowFrequency": {
+          "vehicleRole": "default",
+          "exteriorLights": "A8",
+          "pathHistory": [
+            {
+              "pathPosition": {
+                "deltaLatitude": 10000,
+                "deltaLongitude": 5000,
+                "deltaAltitude": 12800
+              },
+              "pathDeltaTime": 1000
+            }
+          ]
+        }
+      },
+      "specialVehicleContainer": {
+        "publicTransportContainer": {
+          "embarkationStatus": false,
+          "ptActivation": {
+            "ptActivationType": 0,
+            "ptActivationData": "001122334455"
+          }
+        }
+      }
+    }
+  }
+}
