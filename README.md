@@ -35,6 +35,9 @@ The deployment of the 5GMETA MEC Platfrom will :
 The following is done manually:
 - Configuration of ETSI OSM
 
+
+TODO:
+
 Notary and Connaisseur for managing security in the cluster are disabled in the current version.
 
 
@@ -80,9 +83,7 @@ The required resources to install [ETSI Open Source MANO (OSM)](https://osm.etsi
 
 
 
-
 ### Deploying the MEC Platform
-
 
 #### MicroK8s used to provide a Kubernetes cluster to OSM
 
@@ -125,9 +126,7 @@ helm upgrade opencost --repo https://opencost.github.io/opencost-helm-chart open
 ##### Deployment of the  the MEC Platform
 
 To install the MEC Platform on an a VM or a physical server :
-
 - Modify the inventory file to set the IP address and the ssh user
-
 - Then type:
 
 ```bash
@@ -147,11 +146,9 @@ kubectl get -n osm -o jsonpath="{.spec.rules[0].host}" ingress nbi-ingress
 
 #### Post OSM installation configurations
 
-
 ##### Create a VIM for deploying the Pipelines
 
 5GMETA uses pipelines which are Docker containers chained together for a specific data processing. In OSM, a VIM account is created and used to configure a VIM. To create a VIM account, type:
-
 ```bash
 sudo snap install osmclient
 osm vim-create --name 5gmeta-vim --user admin --password admin --tenant admin --account_type dummy --auth_url chagne_with_the_auth_url
@@ -161,7 +158,6 @@ Add MicroK8s cluster as K8s cluster
 ```bash
 osm k8scluster-add --creds config_to_be_imported_in_osm.yaml --version 'change_with_mk8s_version' --vim 5gmeta-vim --description "Microk8s cluster" --k8s-nets '{"net1": "osm-ext"}' microk8s-cluster
 ```
-
 
 #### Configure the repositories using OSM UI
 
