@@ -77,15 +77,15 @@ env:
   - name: db_host
     value: "mysql-cluster.osm.svc.cluster.local"
   - name: db_user
-    value: "root"
+    value: "{{ .Values.global.mecplatform.db.rootuser }}"
   - name: db_root_password
-    value: "5gmeta-platform"
+    value: "{{ .Values.global.mecplatform.db.rootpassword }}"
   - name: db_name
     value: "instancedb"
   - name: DB_USER
-    value: "5gmeta-platform"
+    value: "{{ .Values.global.mecplatform.db.username }}"
   - name: DB_PASSWORD
-    value: "5gmeta-platform"
+    value: "{{ .Values.global.mecplatform.db.password }}"
   - name: DB_IP
     value: "10.2.0.5"
   - name: DB_PORT
@@ -113,7 +113,6 @@ autoscaling:
   minReplicas: 1
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
 
 nodeSelector: {}
 

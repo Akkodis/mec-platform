@@ -77,26 +77,23 @@ resources: {}
 
 env:
   - name: ACTIVEMQ_CONNECTION_USER
-    value: "5gmeta-platform"
+    value: "{{ .Values.global.mecplatform.broker.username }}"
   - name: ACTIVEMQ_CONNECTION_PASSWORD
-    value: "5gmeta-platform"
+    value: "{{ .Values.global.mecplatform.broker.password }}"
   - name: ACTIVEMQ_JMX_USER
-    value: "5gmeta-platform"
+    value: "{{ .Values.global.mecplatform.broker.username }}"
   - name: ACTIVEMQ_JMX_PASSWORD
-    value: "5gmeta-platform"
+    value: "{{ .Values.global.mecplatform.broker.password }}"
   - name: ACTIVEMQ_WEB_USER
-    value: "admin"
+    value: "{{ .Values.global.mecplatform.broker.admin.username }}"
   - name: ACTIVEMQ_WEB_PASSWORD
-    value: "admin-2024-2025."
-
-
+    value: "{{ .Values.global.mecplatform.broker.admin.password }}"
 
 autoscaling:
   enabled: false
   minReplicas: 1
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
 
 nodeSelector: {}
 

@@ -77,9 +77,9 @@ resources: {}
 
 env:
   - name: AMQP_USER
-    value: "5gmeta-platform"
+    value: "{{ .Values.global.mecplatform.broker.username }}"
   - name: AMQP_PASS
-    value: "5gmeta-platform"
+    value: "{{ .Values.global.mecplatfrom.broker.password }}"
   - name: AMQP_IP
     value: "message-broker.osm.svc.cluster.local"
   - name: AMQP_PORT
@@ -90,7 +90,6 @@ autoscaling:
   minReplicas: 1
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
 
 nodeSelector: {}
 
