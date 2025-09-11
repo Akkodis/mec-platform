@@ -50,7 +50,7 @@
       block:
         - name: Download ETSI OSM installation Script
           ansible.builtin.get_url:
-            url: https://osm-download.etsi.org/ftp/osm-17.0-seventeen/install_osm.sh
+            url: https://osm-download.etsi.org/ftp/osm-18.0-eighteen/install_osm.sh
             dest: /tmp/install_osm.sh
             mode: '0777'
 
