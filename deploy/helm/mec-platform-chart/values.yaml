@@ -12,6 +12,7 @@ global:
       rootpassword: &rootpassword  "5gmeta-platform"
       username: "5gmeta-mec-platform"
       password: "5gmeta-mec-platform"
+      ip: "10.2.0.5"
         
 mysql:
   fullnameOverride: mysql-cluster
