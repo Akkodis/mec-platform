@@ -9,7 +9,7 @@ global:
         password: "admin-2024-2025."
     db:
       rootuser: "root"
-      rootpassword: &roopassword "5gmeta-plaform"
+      rootpassword: &rootpassword "5gmeta-plaform"
       username: "5gmeta-mec-platform"
       password: "5gmeta-mect-platfrom"
         
