@@ -3,15 +3,15 @@ global:
     hostname: akkodismec.francecentral.cloudapp.azure.com
     borker:
       username: "5gmeta-platform"
-      password: "5gmeta-platform"
+      password: {{ randBytes 16 | b64dec  | quote }}
       admin:
         username: "admin"
         password: "admin-2024-2025."
     db:
       rootuser: "root"
-      rootpassword: &rootpassword "5gmeta-plaform"
+      rootpassword: &rootpassword  {{ randBytes 16 | b64dec | quote }}
       username: "5gmeta-mec-platform"
-      password: "5gmeta-mect-platfrom"
+      password: {{ randBytes 24 | b64dec | quote }}
         
 mysql:
   fullnameOverride: mysql-cluster

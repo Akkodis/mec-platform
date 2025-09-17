@@ -77,17 +77,17 @@ env:
   - name: db_host
     value: "mysql-cluster.osm.svc.cluster.local"
   - name: db_user
-    value: "{{ .Values.global.mecplatform.db.rootuser }}"
+    value: {{ .Values.global.mecplatform.db.rootuser }}
   - name: db_root_password
-    value: "{{ .Values.global.mecplatform.db.rootpassword }}"
+    value: {{ .Values.global.mecplatform.db.rootpassword }}
   - name: db_name
     value: "instancedb"
   - name: DB_USER
-    value: "{{ .Values.global.mecplatform.db.username }}"
+    value: {{ .Values.global.mecplatform.db.username }}
   - name: DB_PASSWORD
-    value: "{{ .Values.global.mecplatform.db.password }}"
+    value: {{ .Values.global.mecplatform.db.password }}
   - name: DB_IP
-    value: "10.2.0.5"
+    value: {{ .Values.global.mecplatform.db.ip }}
   - name: DB_PORT
     value: "30057"
   - name: DB_NAME

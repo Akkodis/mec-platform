@@ -77,9 +77,9 @@ resources: {}
 
 env:
   - name: AMQP_USER
-    value: "{{ .Values.global.mecplatform.broker.username }}"
+    value: {{ .Values.global.mecplatform.broker.username }}
   - name: AMQP_PASS
-    value: "{{ .Values.global.mecplatfrom.broker.password }}"
+    value: {{ .Values.global.mecplatfrom.broker.password }}
   - name: AMQP_IP
     value: "message-broker.osm.svc.cluster.local"
   - name: AMQP_PORT

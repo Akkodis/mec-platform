@@ -77,17 +77,17 @@ resources: {}
 
 env:
   - name: ACTIVEMQ_CONNECTION_USER
-    value: "{{ .Values.global.mecplatform.broker.username }}"
+    value: {{ .Values.global.mecplatform.broker.username }}
   - name: ACTIVEMQ_CONNECTION_PASSWORD
-    value: "{{ .Values.global.mecplatform.broker.password }}"
+    value: {{ .Values.global.mecplatform.broker.password }}
   - name: ACTIVEMQ_JMX_USER
-    value: "{{ .Values.global.mecplatform.broker.username }}"
+    value: {{ .Values.global.mecplatform.broker.username }}
   - name: ACTIVEMQ_JMX_PASSWORD
-    value: "{{ .Values.global.mecplatform.broker.password }}"
+    value: {{ .Values.global.mecplatform.broker.password }}
   - name: ACTIVEMQ_WEB_USER
-    value: "{{ .Values.global.mecplatform.broker.admin.username }}"
+    value: {{ .Values.global.mecplatform.broker.admin.username }}
   - name: ACTIVEMQ_WEB_PASSWORD
-    value: "{{ .Values.global.mecplatform.broker.admin.password }}"
+    value: {{ .Values.global.mecplatform.broker.admin.password }}
 
 autoscaling:
   enabled: false
