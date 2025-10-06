@@ -32,13 +32,14 @@ dependencies:
     repository: https://charts.apiseven.com
     version: 2.11.6
 
-  - name: mysql-operator
-    version: 2.2.5
-    repository: https://mysql.github.io/mysql-operator/
+  - name: mariadb-operator
+    repository: https://helm.mariadb.com/mariadb-operator
+    version: 25.8.4
 
-  - name: mysql-innodbcluster
-    version: 2.2.5
-    repository: https://mysql.github.io/mysql-operator/
+  - name: mariadb-cluster
+    repository: https://helm.mariadb.com/mariadb-operator
+    version: 25.8.4
+
 
 #  - name: connaisseur
 #    version: 2.8.1 
