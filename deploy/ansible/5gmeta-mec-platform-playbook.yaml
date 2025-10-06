@@ -102,6 +102,23 @@
             - "ingress/ngui-ingress"
           ignore_errors: true
 
+        - name: Create a Secret for access to Cloud Platform database
+          kubernetes.core.k8s:
+            state: present
+            definition:
+              apiVersion: v1
+              kind: Secret
+              metadata:
+                name: cloud-database-access
+                namespace: osm
+                labels:
+                  app.kubernetes.io/managed-by: Helm
+              stringData:
+                username: yourusername
+                password: yourpassword
+                ip: 10.2.0.5 
+                port: 3306
+
         - name: Deploy  the 5GMETA MEC Platform modules
           kubernetes.core.helm:
             name: mec-platform
