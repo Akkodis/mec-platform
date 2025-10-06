@@ -31,8 +31,8 @@
     city: Blagnac
     latitude: "43.636398"
     longitude: "1.390600"
-    auth_username: "mec-akkodis"
-    auth_password: "mec-platform-2053"
+    auth_username: "username"
+    auth_password: "changeme"
     cpu: "4"
     gpu: "false"
     memory: "16"
@@ -124,7 +124,7 @@
           username: "{{ auth_username }}"
           password: "{{ auth_password }}"
           client_id: 5gmeta_login
-          client_secret: 5JbMwYByfgc8OF4I9FCLvyUg3MKDVyF5
+          client_secret: aydrbJYVVCl7gpSYW3lv4hMYWUXcXtJA
         creates: "{{ ansible_env.HOME }}/5gmeta/logs/services_registered"
       register: json_response
       changed_when: json_response.status | default(0) == 200
