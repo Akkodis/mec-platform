@@ -116,8 +116,8 @@
               stringData:
                 username: yourusername
                 password: yourpassword
-                ip: 10.2.0.5 
-                port: 3306
+                ip: "10.2.0.5" 
+                port: "3306"
 
         - name: Deploy  the 5GMETA MEC Platform modules
           kubernetes.core.helm:
