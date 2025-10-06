@@ -1,0 +1,12 @@
+dependencies:
+- name: apisix
+  repository: https://charts.apiseven.com
+  version: 2.11.6
+- name: mariadb-operator
+  repository: https://helm.mariadb.com/mariadb-operator
+  version: 25.8.4
+- name: mariadb-cluster
+  repository: https://helm.mariadb.com/mariadb-operator
+  version: 25.8.4
+digest: sha256:598c97bbbb7e0a42c1136630b3821a9c15be26ff892b44ce3791c6ca66f8cdb9
+generated: "2025-10-06T18:14:47.731086965+02:00"

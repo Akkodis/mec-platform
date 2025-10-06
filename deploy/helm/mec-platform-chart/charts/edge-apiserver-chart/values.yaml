@@ -75,21 +75,42 @@ resources: {}
 
 env:
   - name: db_host
-    value: "mysql-cluster.osm.svc.cluster.local"
+    value: "mariadb-cluster.osm.svc.cluster.local"
   - name: db_user
-    value: "root"
+    valueFrom:
+      secretKeyRef:
+        name: mariadb
+        key: username
   - name: db_root_password
-    value: "5gmeta-platform"
+    valueFrom:
+      secretKeyRef:
+        name: mariadb
+        key: root-passord
   - name: db_name
-    value: "instancedb"
+    valueFrom:
+      secretKeyRef:
+        name: mariadb
+        key: database
   - name: DB_USER
-    value: "5gmeta-platform"
+    valueFrom:
+      secretKeyRef:
+        name: cloud-database-access
+        key: username
   - name: DB_PASSWORD
-    value: "5gmeta-platform"
+    valueFrom:
+      secretKeyRef:
+        name: cloud-database-access
+        key: password
   - name: DB_IP
-    value: "10.2.0.5"
+    valueFrom:
+      secretKeyRef:
+        name: cloud-database-access
+        key: ip
   - name: DB_PORT
-    value: "30057"
+    valueFrom:
+      secretKeyRef:
+        name: cloud-database-access
+        key: port
   - name: DB_NAME
     value: dataflowdb
   - name: DATAFLOW_VEHICLE_MINUTES_LIMIT

@@ -6,26 +6,40 @@ global:
       password: "5gmeta-platform"
       admin:
         username: "admin"
-        password: "admin-2024-2025."
-    db:
-      rootuser: "root"
-      rootpassword: &rootpassword  "5gmeta-platform"
-      username: "5gmeta-mec-platform"
-      password: "5gmeta-mec-platform"
-      ip: "10.2.0.5"
-        
-mysql-innodbcluster:
-  name: mysql-cluster
-  tls:
-    useSelfSigned: true
-  credentials:
-    root:
-      user: root
-      password: *rootpassword
-      host: "%"
+        password: "change"
+  mariadb:
+    rootpassword: &rootpassword  "changeme"
+    username: "root"
+    database: "instancedb"
+
+mariadb-operator:
+  fullnameOverride: "mariadb-operator"
+
+
+mariadb-cluster:
+  fullnameOverride: mariadb-cluster
+  mariadb:
+    galera:
+      enabled: false
+  replicas: 1
+  rootPasswordSecretKeyRef:
+    name: mariadb
+    key: root-password
+  storage:
+    size: 2Gi
 
 apisix:
   fullnameOverride: "apisix"
+
+  apisix:
+    deployment:
+      mode: "standalone"
+      role: data_plane
+      role_data_plane:
+        config_provider: yaml
+    admin:
+      enabled: false
+
   control:
     enabled: false
   etcd:
