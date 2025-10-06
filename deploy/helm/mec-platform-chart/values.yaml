@@ -67,11 +67,11 @@ apisix:
       nginx.ingress.kubernetes.io/proxy-busy-buffers-size: 256k
       cert-manager.io/issuer: letsencrypt-prod
 
-    extraVolumes:
-      - name: routes
-        configMap:
-          name: apisix-routes
-    extraVolumeMounts:
-      - name: routes
-        mountPath: /usr/local/apisix/conf/apisix.yaml
-        subPath: apisix.yaml
+  extraVolumes:
+    - name: routes
+      configMap:
+        name: apisix-routes
+  extraVolumeMounts:
+    - name: routes
+      mountPath: /usr/local/apisix/conf/apisix.yaml
+      subPath: apisix.yaml
