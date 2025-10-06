@@ -34,6 +34,10 @@ apisix:
     type: NodePort
   ingress:
     enabled: true
+    tls:
+    - hosts:
+      - akkodismec.francecentral.cloudapp.azure.com
+      secretName: apisix-mecplatform-tls
     hosts: 
        - hosts: akkodismec.francecentral.cloudapp.azure.com
          paths:
