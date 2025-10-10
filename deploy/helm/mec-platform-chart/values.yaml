@@ -21,12 +21,12 @@ mariadb-cluster:
   mariadb:
     galera:
       enabled: false
-  replicas: 1
-  rootPasswordSecretKeyRef:
-    name: mariadb
-    key: root-password
-  storage:
-    size: 2Gi
+    replicas: 1
+    rootPasswordSecretKeyRef:
+      name: mariadb
+      key: root-password
+    storage:
+      size: 2Gi
 
 apisix:
   fullnameOverride: "apisix"
