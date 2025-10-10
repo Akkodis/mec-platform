@@ -2,10 +2,9 @@
 
 ## Introduction 
 
-This repository contains the components of the 5GMETA MEC Platform which servers the third-parties to request the deployment of  their pipelines  to handle specific data-types. This repo includes:
+This repository contains the components of the 5GMETA MEC Platform which allows third-parties to request the deployment of  their pipelines  to handle specific data-types. This repo includes:
  - source codes of the MEC Platform API server and MEC platform applications (LCCAM, Data Quality, etc.)
  - the scripts to deploy the 5GMETA MEC Platform
-
 
 The architecture of the MEC Platform is illustrated  by the figure below:
 
@@ -25,6 +24,9 @@ Sequence Diagram of exchanged Messages
 
 
 ## Deployment of the MEC Platform
+
+Prior to the deployment of the MEC Platform, the MEC Platform's administrator should onboard its instance to the Cloud Platform. This onboarding process, consists of obtaining the credentials, IP address and Port number for accessing the MariaDB server.
+These information are configure in the Ansible Playbook.
 
 The deployment of the 5GMETA MEC Platfrom will :
 
@@ -82,7 +84,6 @@ The required resources to install [ETSI Open Source MANO (OSM)](https://osm.etsi
 - In the develpment environment, vagrant is used with VirtualBox as a provider to instanciate the MEC platform and implement the deployment procedure described earlier.
 
 
-
 ### Deploying the MEC Platform
 
 #### MicroK8s used to provide a Kubernetes cluster to OSM
@@ -103,8 +104,8 @@ The file 'config_to_be_imported_in_osm.yaml' must be copied in the MEC Platform 
 
 A new features of the 5GMETA  MEC Platform is to use Opencoast for monitoring the cost of the 5GMETA pipeline.
 
-**Install OpenCost on Microk8s**
 
+**Install OpenCost on Microk8s**
 
 **Install Prometheus as required by OpenCost**
 ```bash
@@ -121,7 +122,6 @@ helm install prometheus --repo https://prometheus-community.github.io/helm-chart
 helm upgrade opencost --repo https://opencost.github.io/opencost-helm-chart opencost \
   --namespace opencost --create-namespace
 ```
-
 
 ##### Deployment of the  the MEC Platform
 
