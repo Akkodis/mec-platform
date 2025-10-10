@@ -85,7 +85,7 @@ env:
     valueFrom:
       secretKeyRef:
         name: mariadb
-        key: root-passord
+        key: root-password
   - name: db_name
     valueFrom:
       secretKeyRef:
@@ -101,6 +101,21 @@ env:
       secretKeyRef:
         name: cloud-database-access
         key: password
+  - name: OSM_USER
+    valueFrom:
+      secretKeyRef:
+        name: osm-user-secret
+        key: username
+  - name: OSM_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: osm-user-secret
+        key: password
+  - name: OSM_PROJECT_ID
+    valueFrom:
+      secretKeyRef:
+        name: osm-user-secret
+        key: project-id
   - name: DB_IP
     valueFrom:
       secretKeyRef:
@@ -117,17 +132,16 @@ env:
     value: "1"
   - name: DATAFLOW_INFRASTRUCTURE_MINUTES_LIMIT
     value: "5"
-
-#  - name: introspectionip
-#    value: ""
-#  - name: kubernetesip
-#    value: ""
-#  - name: orchestratorip
-#    value: ""
-#  - name: nodeip
-#    valueFrom:
-#      fieldRef:
-#        fieldPath: status.hostIP
+  - name: INTROSPECTION_HOST
+    value: ""
+  - name: KUBERNETES_HOST
+    value: ""
+  - name: ORCHESTRATION_HOST
+    value: "nbi.osm.svc.cluster.local:9999"
+  - name: nodeip
+    valueFrom:
+      fieldRef:
+        fieldPath: status.hostIP
 
 autoscaling:
   enabled: false
